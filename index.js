@@ -68,22 +68,25 @@ _.typeOf = function(value){
 *   _.first(["a", "b", "c"], 1) -> "a"
 *   _.first(["a", "b", "c"], 2) -> ["a", "b"]
 */
-_.first = function(array,number){
-    var arr = [];
-   if( Array.isArray(array) !== "array"){
-       return "[]";
-   } else if(typeof number !== "number"){
-       return array[0];
-   } else if(Math.sign(number) !== 1 ){
-       return [];
-   } else if(Array.isArray(array)=== 'array' && typeof number === "number"&& Math.sign(number) === 1){
-       for(var i = 0; i>= number;i++){
-           arr.push(array[i]);
-       } return arr;
-       
-       
-   }
-};
+_.first = function(arr, num) {
+    const arr1 = [];
+    
+    if (Array.isArray(arr) === false || num < 0) {
+        return [];
+    }
+    else if (num === undefined) {
+        return arr[0];
+    }
+    else if (num > arr.length) {
+        return arr;
+    }
+    else {
+        for (let i = 0; i < num; i++) {
+            arr1.push(arr[i]);
+        }
+        return arr1;
+    }
+}
 
 
 /** _.last
@@ -103,9 +106,25 @@ _.first = function(array,number){
 *   _.last(["a", "b", "c"], 1) -> "c"
 *   _.last(["a", "b", "c"], 2) -> ["b", "c"]
 */
-_.last = function(array, number){
+_.last = function(array, number) {
+    const arr = [];
     
-};
+    if (Array.isArray(array) === false || number < 0) {
+        return [];
+    }
+    else if (number === undefined) {
+        return array[array.length - 1];
+    }
+    else if (number > array.length) {
+        return array;
+    }
+    else {
+        for (let i = number - 1; i < array.length; i++) {
+            arr.push(array[i]);
+        }
+        return arr;
+    }
+}
 
 /** _.indexOf
 * Arguments:
@@ -207,9 +226,22 @@ if (Array.isArray(collection)) {
 * Extra Credit:
 *   use _.each in your implementation
 */
-_.filter = function(array, funtion){
-    
-};
+_.filter = function(array, fn) {
+/*    const arr = [];
+    for (let i = 0; i < array.length; i++) {
+        if (funct(array[i],i,array)) {
+          arr.push(array[i]);
+        } 
+    }   
+    return arr; */
+    const arr = [];
+    _.each(array, function(e, i, c) {
+        if (fn(e, i, c)) {
+            arr.push(e);
+        }
+    });
+    return arr;
+}
 
 /** _.map
 * Arguments:
@@ -226,9 +258,24 @@ _.filter = function(array, funtion){
 * Examples:
 *   _.map([1,2,3,4], function(e){return e * 2}) -> [2,4,6,8]
 */
-_.map = function(collection, funtion){
-    
-};
+_.map = function(coll, fn) {
+    /*  const arr = [];
+      if (Array.isArray(coll)) {
+          for (let i = 0; i < coll.length; i++) {
+            arr.push(fn(coll[i], i, coll));
+          }
+      } else {
+          for (let key in coll) {
+              arr.push(fn(coll[key], key, coll));
+          }
+      } 
+      return arr; */
+      const arr = [];
+      _.each(coll, function(e, i, c) {
+         arr.push(fn(e, i, c)); 
+      });
+      return arr;
+}
 
 /** _.reject
 * Arguments:
@@ -242,10 +289,15 @@ _.map = function(collection, funtion){
 * Examples:
 *   _.reject([1,2,3,4,5], function(e){return e%2 === 0}) -> [1,3,5]
 */
-_.reject = function(array, funtion){
-    
-};
-
+_.reject = function(coll, fn) {
+    const arr = [];
+    for(let i = 0; i < coll.length; i++) {
+        if(fn(coll[i], i, coll) !== true) {
+            arr.push(coll[i]);
+        }
+    }
+    return arr;
+}
 /** _.partition
 * Arguments:
 *   1) An array
@@ -264,9 +316,20 @@ _.reject = function(array, funtion){
 *   }); -> [[2,4],[1,3,5]]
 }
 */
-_.partition = function(array, funtion){
-    
-};
+_.partition = function(array, fn) {
+    const arr = [];
+    const tr = [];
+    const fa = [];
+    for (let i = 0; i < array.length; i++) {
+        if(fn(array[i])) {
+            tr.push(array[i]);
+        } else {
+            fa.push(array[i]);
+        }
+    }
+    arr.push(tr, fa);
+    return arr;
+}
 
 
 /** _.every
@@ -289,23 +352,35 @@ _.partition = function(array, funtion){
 *   _.every([2,4,6], function(e){return e % 2 === 0}) -> true
 *   _.every([1,2,3], function(e){return e % 2 === 0}) -> false
 */
-_.every = function(collection, funtion){
-  // create var allTrue here, default value should be true
-  
-  _.each(collection, function(value, loc, collection){
-      
-      if(!test(value, loc, collection)){
-          allTrue = false
-      }
-  });
-  
-  // then you can just return the allTrue value here
-  return true;
-
-
-}
-// missing } here
-
+_.every = function(coll, fn) {
+    if(fn === undefined) {
+        for (let i = 0; i < coll.length; i++) {
+            if (!coll[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+    else if (_.typeOf(coll) === "array") {
+        for(let i = 0; i < coll.length; i++) {
+            if(!fn(coll[i])) {
+                return false;
+            } else {
+                continue;
+            }
+        }
+        return true;
+    } else {
+        for (let key in coll) {
+            if(!fn(coll[key], key, coll)) {
+                return false;
+            } else {
+                continue;
+            }
+        }
+        return true;
+    }
+};
 /** _.some
 * Arguments:
 *   1) A collection
@@ -326,9 +401,33 @@ _.every = function(collection, funtion){
 *   _.some([1,3,5], function(e){return e % 2 === 0}) -> false
 *   _.some([1,2,3], function(e){return e % 2 === 0}) -> true
 */
-_.some = function(collection, funtion){
+_.some = function(coll, fn) {
+    if (fn === undefined) {
+        for (let i = 0; i < coll.length; i++) {
+            if (coll[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
     
-};
+    else if (Array.isArray(coll)) {
+        for (let i = 0; i < coll.length; i++) {
+            if (fn(coll[i])) {
+                return true;
+            }
+        }
+        return false;
+    } else {
+        for (let key in coll) {
+            if(fn(coll[key], key, coll)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
 
 /** _.pluck
 * Arguments:
@@ -340,9 +439,18 @@ _.some = function(collection, funtion){
 * Examples:
 *   _.pluck([{a: "one"}, {a: "two"}], "a") -> ["one", "two"]
 */
-_.pluck = function(array, property){
-    
-};
+_.pluck = function(array, prop) {
+    /*
+    const arr = [];
+    for (let i = 0; i < array.length; i++) {
+        arr.push(array[i][prop]);
+    }
+    return arr;
+    */
+    return _.map(array, function(e, i, c) {
+        return(array[i][prop]);
+    });
+}
 
 //////////////////////////////////////////////////////////////////////
 // DON'T REMOVE THIS CODE ////////////////////////////////////////////
